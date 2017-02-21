@@ -1,4 +1,3 @@
-#pragma once
 /****************************************************************************************************************/
 /*                                                                                                              */
 /*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
@@ -6,25 +5,27 @@
 /****************************************************************************************************************/
 
 #pragma once
-#include "pch.h"
-#include "sensor_base.h"
 
-class adc832: public sensor_base
+#include "pch.h"
+
+#include "sensor_base.h"
+#include <wiringPiI2C.h>
+
+class i2c_base : public sensor_base
 {
-	uint32_t m_dipin;
-	uint32_t m_dopin;
-	uint32_t m_cspin;
-	uint32_t m_clockpin;
-	uint32_t m_channel;
+	uint32_t m_file_handle;
 
 protected:
-	uint32_t read_adc();
+	virtual sensor_data read();
+	virtual std::error_code write(sensor_data & data);
+
+	int write_reg8(int reg, int data);
+	int write_reg16(int reg, int data);
+	int read_reg8(int reg);
+	int read_reg16(int reg);
 
 public:
-	adc832();
-	adc832(std::string name, uint32_t dopin, uint32_t dipin, uint32_t cspin, uint32_t clockpin, uint32_t channel);
-	~adc832();
-	virtual std::error_code sample();
-	virtual std::string to_string();
+	i2c_base(uint16_t id);
+	~i2c_base();
 };
 

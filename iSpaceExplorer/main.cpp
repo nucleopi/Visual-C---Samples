@@ -1,15 +1,29 @@
-//
-//RHT03 Main
-//
-
+/****************************************************************************************************************/
+/*                                                                                                              */
+/*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
+/*                                                                                                              */
+/****************************************************************************************************************/
 
 #include "pch.h"
 #include "hc_sr04.h"
 #include "grove_ultra_sonic_v2.h"
-#include "analog_sensor_adc832.h"
+#include "adc832_analog.h"
 #include "ir_generic.h"
+#include "groove_lcd.h"
+#include "dht11.h"
+#include "rth03.h"
 
 #include <fstream>
+
+enum SUPPORTED_SENSORS
+{
+	HC_SR04 = 1,
+	GROOVE_ULTRA_SONIC_V2,
+	ADC832_ANALOG,
+	IR_GENERIC,
+	DHT11,
+	RTH03,
+};
 
 static constexpr int DEFAULT_PIN_OUTPUT = 7;
 static constexpr int DEFAULT_PIN_INPUT = 29;
@@ -54,24 +68,12 @@ static void show_usage(const string& name)
 		<< "\t-pt,--pin_output \tSpecify the board pin connected to the sensor's output/data\n"
 		<< "\t-pclk,--pin_clock \tSpecify the board pin connected to the sensor's clock\n"
 		<< "\t-pcs,--pin_cs \tSpecify the board pin connected to the sensor's cs\n"
-		<< "\t-s,--sensor \tSpecify the sensor type (0=Array 1=HC-SRO4, 2=Groove-Ultra-Sonic-V2, 3=keys-ir-obstacle)\n"
+		<< "\t-s,--sensor \tSpecify the sensor type (0=Array 1=HC-SRO4, 2=Groove-Ultra-Sonic-V2, 3=adc832, 4=keys-ir-obstacle, 5=dht11, 6=rth03)\n"
 		<< "\t-sf, --sensor_file\n"
 		<< "\t-t,--time \tMeasurament pace in ms\n"
 		<< "\t-d,--debug \tShow debug data\n"
 		<< endl;
 }
-
-static void compute_standard_deviation(list<float> &values, double& average, double &std_deviation)
-{
-	double sum = accumulate(values.begin(), values.end(), 0.0);
-	average = sum / values.size();
-
-	vector<double> diff(values.size());
-	transform(values.begin(), values.end(), diff.begin(), [average](double x) { return x - average; });
-	double sq_sum = inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
-	std_deviation = sqrt(sq_sum / values.size());
-}
-
 
 int main(int argc, char** argv)
 {
@@ -204,17 +206,23 @@ int main(int argc, char** argv)
 		unique_ptr<sensor_base> s;
 		switch (sensor_type)
 		{
-		case 1:
+		case HC_SR04:
 			s = make_unique<hc_sr04>(sensor_name, pin_output, pin_input);
 			break;
-		case 2:
+		case GROOVE_ULTRA_SONIC_V2:
 			s = make_unique<grove_ultra_sonic_v2>(sensor_name, pin_output);
 			break;
-		case 3:
-			s = make_unique<analog_sensor_adc832>(sensor_name, pin_output, pin_input, pin_cs, pin_clock, pin_channel);
+		case ADC832_ANALOG:
+			s = make_unique<adc832_analog>(sensor_name, pin_output, pin_input, pin_cs, pin_clock, pin_channel);
 			break;
-		case 4:
+		case IR_GENERIC:
 			s = make_unique<ir_generic>(sensor_name, pin_output, pin_input);
+			break;
+		case DHT11:
+			s = make_unique<dht11>(sensor_name, pin_output);
+			break;
+		case RTH03:
+			s = make_unique<rht03>(sensor_name, pin_output);
 			break;
 		default:
 			break;
@@ -230,35 +238,46 @@ int main(int argc, char** argv)
 		sensor_type = 0;
 	}
 	
+	groove_lcd lcd(0x62);
 
 	while (!ctrl_c_pressed)
 	{
 		for (auto &&s : sensors)
 		{
-			if (s->name()->find("ir_generic") != string::npos)
+			lcd.print(s->name());
+			if (s->name().find("ir_generic") != string::npos)
 			{
-				sensor_data data;
-				data.i32data1 = 0x40040100;
-				data.i16data1 = 0xbcbd;
-				s->write(data);
 
-				delay(1);
+				if (pin_input != 0)
+				{
+					sensor_data data;
+					data.i32data1 = 0xFFFFFFFF; // 0x40040100;
+					data.i16data1 = 0x0000; // 0xbcbd;
+					//data.i32data1 = 0x40040100;
+					//data.i16data1 = 0xbcbd;
+					((ir_generic*)s.get())->send(data);
+
+					delay(2000);
+
+					continue;
+				}
 			}
 			
-			sensor_data data = s->read();
-			
-			if (data.result_state == ERROR_SUCCESS)
+			auto err = s->sample();
+
+			if ( err == ERROR_SUCCESS)
 			{
 				char print_buff[100];
 				//snprintf(print_buff, sizeof(print_buff), "\n Sensor: %s \t\t Value1:\t%.2f\n", s->name().get()->c_str(), data.data1);
-				snprintf(print_buff, sizeof(print_buff), "\n Sensor: %s \t\t Values:\t%.2f \t%.2f \t%x \t%x\n", s->name().get()->c_str(), data.data1, data.data2, data.i32data1, data.i32data2);
+				snprintf(print_buff, sizeof(print_buff), "\n Sensor: %s \t\t Data:%s\n", s->name().c_str(), s->to_string().c_str());
 				printf("%s", print_buff);
 			}
 			else
 			{
-				printf("\n Sensor %s Error: %d", s->name().get()->c_str(), data.result_state);
+				printf("\n Sensor %s Error: %d", s->name().c_str(), err);
 			}
 		}
+	
 		delay(measurement_pace);
 	}
 	return 0;

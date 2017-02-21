@@ -1,4 +1,3 @@
-#pragma once
 /****************************************************************************************************************/
 /*                                                                                                              */
 /*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
@@ -6,25 +5,15 @@
 /****************************************************************************************************************/
 
 #pragma once
-#include "pch.h"
-#include "sensor_base.h"
+#include "adc832.h"
 
-class adc832: public sensor_base
+class adc832_analog :
+	public adc832
 {
-	uint32_t m_dipin;
-	uint32_t m_dopin;
-	uint32_t m_cspin;
-	uint32_t m_clockpin;
-	uint32_t m_channel;
-
-protected:
-	uint32_t read_adc();
-
 public:
-	adc832();
-	adc832(std::string name, uint32_t dopin, uint32_t dipin, uint32_t cspin, uint32_t clockpin, uint32_t channel);
-	~adc832();
-	virtual std::error_code sample();
-	virtual std::string to_string();
+	adc832_analog(std::string name, uint32_t dopin, uint32_t dipin, uint32_t cspin, uint32_t clockpin, uint32_t channel);
+	~adc832_analog();
+	virtual sensor_data read();
+	std::error_code write(sensor_data & data);
 };
 

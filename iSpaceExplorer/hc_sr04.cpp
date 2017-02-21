@@ -1,3 +1,9 @@
+/****************************************************************************************************************/
+/*                                                                                                              */
+/*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
+/*                                                                                                              */
+/****************************************************************************************************************/
+
 #include "pch.h"
 #include "hc_sr04.h"
 
@@ -8,7 +14,7 @@ hc_sr04::hc_sr04()
 
 hc_sr04::hc_sr04(std::string name, uint32_t echo, uint32_t trigger)
 {
-	m_name = std::make_shared<std::string>(name);
+	m_name = name;
 	m_echo = echo;
 	m_trigger = trigger;
 
@@ -20,6 +26,17 @@ hc_sr04::hc_sr04(std::string name, uint32_t echo, uint32_t trigger)
 hc_sr04::~hc_sr04()
 {
 
+}
+
+std::error_code hc_sr04::sample()
+{
+	m_sample_data = read();
+	return m_sample_data.result_state;
+}
+
+std::string hc_sr04::to_string()
+{
+	return std::to_string(m_sample_data.data1);
 }
 
 std::error_code hc_sr04::write(sensor_data & data) { return std::make_error_code(std::errc::not_supported); }
@@ -66,9 +83,3 @@ sensor_data hc_sr04::read()
 
 	return data;
 }
-
-std::shared_ptr<std::string> hc_sr04::name() const
-{
-	return std::shared_ptr<std::string>(new std::string("hc_sr04"));
-}
-

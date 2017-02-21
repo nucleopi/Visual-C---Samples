@@ -1,3 +1,9 @@
+/****************************************************************************************************************/
+/*                                                                                                              */
+/*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
+/*                                                                                                              */
+/****************************************************************************************************************/
+
 #include "sensor_base.h"
 
 sensor_base::sensor_base()
@@ -26,7 +32,7 @@ void sensor_base::set_debug_mode(bool mode)
 	debug_mode = mode;
 }
 
-std::shared_ptr<std::string> sensor_base::name() const
+std::string sensor_base::name() const
 {
 	return m_name;
 }

@@ -1,4 +1,3 @@
-#pragma once
 /****************************************************************************************************************/
 /*                                                                                                              */
 /*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
@@ -6,25 +5,29 @@
 /****************************************************************************************************************/
 
 #pragma once
-#include "pch.h"
-#include "sensor_base.h"
 
-class adc832: public sensor_base
+#include "one_wire_base.h"
+
+inline float create_float(uint8_t int_val, uint8_t remainder_val)
 {
-	uint32_t m_dipin;
-	uint32_t m_dopin;
-	uint32_t m_cspin;
-	uint32_t m_clockpin;
-	uint32_t m_channel;
+	int precision = 10;
+	if (remainder_val > 99) precision = 1000;
+	else if (remainder_val > 9) precision = 100;
+
+	float result = (float)(int_val * 1.0 + remainder_val / precision);
+
+	return result;
+}
+
+class dht11 : public one_wire_base
+{
 
 protected:
-	uint32_t read_adc();
-
+	virtual sensor_data read();
+	virtual std::error_code write(sensor_data& data);
 public:
-	adc832();
-	adc832(std::string name, uint32_t dopin, uint32_t dipin, uint32_t cspin, uint32_t clockpin, uint32_t channel);
-	~adc832();
+	dht11(std::string name, uint32_t dopin) : one_wire_base(name, dopin, 0) {}
+
 	virtual std::error_code sample();
 	virtual std::string to_string();
 };
-

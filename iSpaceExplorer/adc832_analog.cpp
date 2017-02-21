@@ -1,30 +1,27 @@
-#pragma once
 /****************************************************************************************************************/
 /*                                                                                                              */
 /*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
-#pragma once
-#include "pch.h"
-#include "sensor_base.h"
+#include "adc832_analog.h"
 
-class adc832: public sensor_base
+adc832_analog::adc832_analog(std::string name, uint32_t dopin, uint32_t dipin, uint32_t cspin, uint32_t clockpin, uint32_t channel) : adc832(name, dopin, dipin, cspin, clockpin, channel)
 {
-	uint32_t m_dipin;
-	uint32_t m_dopin;
-	uint32_t m_cspin;
-	uint32_t m_clockpin;
-	uint32_t m_channel;
+}
 
-protected:
-	uint32_t read_adc();
+adc832_analog::~adc832_analog()
+{
+}
 
-public:
-	adc832();
-	adc832(std::string name, uint32_t dopin, uint32_t dipin, uint32_t cspin, uint32_t clockpin, uint32_t channel);
-	~adc832();
-	virtual std::error_code sample();
-	virtual std::string to_string();
-};
+sensor_data adc832_analog::read()
+{
+	sensor_data data;
+	data.result_state = std::make_error_code(static_cast<std::errc>(0));
+	return data;
+}
 
+std::error_code adc832_analog::write(sensor_data & data) 
+{ 
+	return std::make_error_code(std::errc::not_supported); 
+}

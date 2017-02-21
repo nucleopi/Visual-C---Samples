@@ -1,3 +1,9 @@
+/****************************************************************************************************************/
+/*                                                                                                              */
+/*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
+/*                                                                                                              */
+/****************************************************************************************************************/
+
 #include "one_wire_base.h"
 
 static constexpr int HIGH_TIME = 32;
@@ -55,10 +61,10 @@ bool one_wire_base::check_crc(const uint8_t * databuf, size_t count, uint8_t crc
 		uint32_t samples = times.size();
 		std::chrono::high_resolution_clock::time_point prev;
 
-		for (int t = 0; t < samples - 1; t = t + 2)
+		for (uint32_t t = 0; t < samples - 1; t = t + 2)
 		{
-			uint32_t time1 = std::chrono::duration_cast<std::chrono::microseconds>(times[t] - prev).count();
-			uint32_t time2 = std::chrono::duration_cast<std::chrono::microseconds>(times[t + 1] - times[t]).count();
+			uint64_t time1 = std::chrono::duration_cast<std::chrono::microseconds>(times[t] - prev).count();
+			uint64_t time2 = std::chrono::duration_cast<std::chrono::microseconds>(times[t + 1] - times[t]).count();
 			prev = times[t + 1];
 			printf("%d, %d\n", time1, time2);
 		}

@@ -1,6 +1,10 @@
+/****************************************************************************************************************/
+/*                                                                                                              */
+/*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
+/*                                                                                                              */
+/****************************************************************************************************************/
+
 #include "adc832.h"
-
-
 
 adc832::adc832()
 {
@@ -8,7 +12,7 @@ adc832::adc832()
 
 adc832::adc832(std::string name, uint32_t dopin, uint32_t dipin, uint32_t cspin, uint32_t clockpin, uint32_t channel)
 {
-	m_name = std::make_shared<std::string>(name);
+	m_name = name;
 	m_dipin = dipin;
 	m_dopin = dopin;
 	m_cspin = cspin;
@@ -18,10 +22,20 @@ adc832::adc832(std::string name, uint32_t dopin, uint32_t dipin, uint32_t cspin,
 	delay(200);
 }
 
-
 adc832::~adc832()
 {
 
+}
+
+std::error_code adc832::sample()
+{
+	m_sample_data.i32data1 = read_adc();
+	return ERROR_SUCCESS;
+}
+
+std::string adc832::to_string()
+{
+	return std::to_string(m_sample_data.i32data1);
 }
 
 uint32_t adc832::read_adc()
@@ -40,7 +54,7 @@ uint32_t adc832::read_adc()
 	digitalWrite(m_clockpin, LOW); //start clock low
 
 	// using ADC 832 which has 2 channels
-	for (int i = 0; i < 2; i++)
+	for (uint8_t i = 0; i < 2; i++)
 	{
 		if (m_channel == i) 
 			digitalWrite(m_dipin, HIGH);
@@ -76,10 +90,4 @@ uint32_t adc832::read_adc()
 	digitalWrite(m_cspin, HIGH);
 
 	return val;
-
-}
-
-std::shared_ptr<std::string> adc832::name() const
-{
-	return std::shared_ptr<std::string>(new std::string("adc832"));
 }

@@ -1,6 +1,10 @@
+/****************************************************************************************************************/
+/*                                                                                                              */
+/*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
+/*                                                                                                              */
+/****************************************************************************************************************/
+
 #include "sensor_transmission_base.h"
-
-
 
 void sensor_transmission_base::reset_time(size_t estimated_samples)
 {
@@ -15,6 +19,7 @@ void sensor_transmission_base::record_time()
 
 sensor_transmission_base::sensor_transmission_base(std::string name, uint32_t dopin, uint32_t dipin) : m_output_pin(dopin), m_input_pin(dipin)
 {
+	m_name = name;
 	std::error_code error = init();
 	if (error)
 		throw std::system_error(error);
@@ -25,7 +30,7 @@ std::error_code sensor_transmission_base::wait_on_signal_transition_to(signal_lo
 	spin = 0;
 
 	auto start = std::chrono::high_resolution_clock::now();
-	while (static_cast<signal_logical_value>(digitalRead(m_output_pin)) != lv && (spin < timeout || timeout == -1))
+	while (static_cast<signal_logical_value>(digitalRead(m_output_pin)) != lv && (spin < timeout || timeout == (uint64_t)-1))
 	{
 		delayMicroseconds(1);
 		spin = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count();
@@ -45,7 +50,7 @@ std::error_code sensor_transmission_base::wait_on_signal_transition_to(signal_lo
 std::error_code sensor_transmission_base::set_signal_transition_to(signal_logical_value lv, uint64_t duration)
 {
 	digitalWrite(m_input_pin, static_cast<int>(lv));
-	delayMicroseconds(duration);
+	delayMicroseconds((unsigned int)duration);
 	return ERROR_SUCCESS;
 }
 

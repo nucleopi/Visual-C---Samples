@@ -1,4 +1,11 @@
+/****************************************************************************************************************/
+/*                                                                                                              */
+/*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
+/*                                                                                                              */
+/****************************************************************************************************************/
+
 #pragma once
+
 #include "sensor_transmission_base.h"
 class ir_base :
 	public sensor_transmission_base
@@ -36,11 +43,11 @@ void ir_base::begin_receive(T * data)
 	while (true)
 	{
 		wait_on_signal_transition_to(signal_logical_value::low, spin, -1);
-		wait_on_signal_transition_to(signal_logical_value::high, spin, data->SENSOR_ANSWER_HANDSHAKE_LOW_US * 1.2);
-		if (spin > data->SENSOR_ANSWER_HANDSHAKE_LOW_US * 0.8 && spin < data->SENSOR_ANSWER_HANDSHAKE_LOW_US * 1.2)
+		wait_on_signal_transition_to(signal_logical_value::high, spin, (uint64_t)(data->SENSOR_ANSWER_HANDSHAKE_LOW_US * 1.2));
+		if (spin > data->SENSOR_ANSWER_HANDSHAKE_LOW_US * 0.8 && spin < (uint64_t)(data->SENSOR_ANSWER_HANDSHAKE_LOW_US * 1.2))
 		{
-			wait_on_signal_transition_to(signal_logical_value::low, spin, data->SENSOR_ANSWER_HANDSHAKE_HIGH_US * 1.2);
-			if (spin > data->SENSOR_ANSWER_HANDSHAKE_HIGH_US * 0.8 && spin < data->SENSOR_ANSWER_HANDSHAKE_HIGH_US * 1.2)
+			wait_on_signal_transition_to(signal_logical_value::low, spin, (uint64_t)(data->SENSOR_ANSWER_HANDSHAKE_HIGH_US * 1.2));
+			if (spin > data->SENSOR_ANSWER_HANDSHAKE_HIGH_US * 0.8 && spin < (uint64_t)(data->SENSOR_ANSWER_HANDSHAKE_HIGH_US * 1.2))
 			{
 				record_time();
 				break;
@@ -65,12 +72,13 @@ void ir_base::begin_send(T * data)
 	set_signal_transition_to(signal_logical_value::high, data->HIGH_TIME);
 	set_signal_transition_to(signal_logical_value::low, data->SENSOR_ANSWER_HANDSHAKE_LOW_US);
 	set_signal_transition_to(signal_logical_value::high, data->SENSOR_ANSWER_HANDSHAKE_HIGH_US);
+	set_signal_transition_to(signal_logical_value::low, data->RAISING_EDGE_PERIOD_US);
 }
 
 template<typename T>
 void ir_base::end_send(T * data)
 {
-
+	set_signal_transition_to(signal_logical_value::high, 1);
 }
 
 template<typename T>

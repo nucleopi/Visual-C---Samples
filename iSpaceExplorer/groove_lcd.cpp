@@ -1,30 +1,38 @@
-#pragma once
 /****************************************************************************************************************/
 /*                                                                                                              */
 /*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
-#pragma once
-#include "pch.h"
-#include "sensor_base.h"
+#include "groove_lcd.h"
 
-class adc832: public sensor_base
+groove_lcd::groove_lcd(uint16_t id): i2c_base(id)
 {
-	uint32_t m_dipin;
-	uint32_t m_dopin;
-	uint32_t m_cspin;
-	uint32_t m_clockpin;
-	uint32_t m_channel;
+}
 
-protected:
-	uint32_t read_adc();
+groove_lcd::~groove_lcd()
+{
+}
 
-public:
-	adc832();
-	adc832(std::string name, uint32_t dopin, uint32_t dipin, uint32_t cspin, uint32_t clockpin, uint32_t channel);
-	~adc832();
-	virtual std::error_code sample();
-	virtual std::string to_string();
-};
+std::error_code groove_lcd::sample()
+{
+	return std::make_error_code(std::errc::not_supported);
+}
 
+std::string groove_lcd::to_string()
+{
+	return std::string();
+}
+
+void groove_lcd::print(const std::string &str)
+{
+	sensor_data data;
+	data.i32data1 = LCD_ADDRESS;
+	write(data);
+
+	for (auto c : str)
+	{
+		data.i32data1 = c;
+		write(data);
+	}
+}

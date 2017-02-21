@@ -1,4 +1,11 @@
+/****************************************************************************************************************/
+/*                                                                                                              */
+/*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
+/*                                                                                                              */
+/****************************************************************************************************************/
+
 #pragma once
+
 #include "sensor_base.h"
 #include <vector>
 #include <chrono>
@@ -32,22 +39,18 @@ protected:
 		if (!data || bit_count > sizeof(T) * 8)
 			return std::make_error_code(std::errc::invalid_argument);
 
-		uint64_t arr[64];
-		int index = 0;
-
 		uint64_t spin = 0;
-		for (int i = 0; i < bit_count; i++)
+		for (size_t i = 0; i < bit_count; i++)
 		{
 			//wait on rising edge
-			wait_on_signal_transition_to(signal_logical_value::high, spin, rawdata->RAISING_EDGE_PERIOD_US);
-			arr[index++] = spin;
+			wait_on_signal_transition_to(signal_logical_value::high, spin, (uint64_t)rawdata->RAISING_EDGE_PERIOD_US);
+
 			//receive bit value
-			wait_on_signal_transition_to(signal_logical_value::low, spin, rawdata->LOGIC_HIGH_PERIOD_MAX_US);
-			arr[index++] = spin;
+			wait_on_signal_transition_to(signal_logical_value::low, spin, (uint64_t)rawdata->LOGIC_HIGH_PERIOD_MAX_US);
 			data[i / (sizeof(T) * 8)] <<= 1;
 
 			//compute bit value
-			if (spin > rawdata->LOGICAL_LOW_HIGH_BOUNDARY)
+			if (spin > (uint64_t)rawdata->LOGICAL_LOW_HIGH_BOUNDARY)
 			{
 				data[i / (sizeof(T) * 8)] |= 1;
 			}
@@ -69,13 +72,12 @@ protected:
 
 		Y mask;
 
-		for (int i = 0; i < bit_count; i++)
+		for (size_t i = 0; i < bit_count; i++)
 		{
 			mask = 1;
 			mask <<= bit_count - 1 - i;
-			set_signal_transition_to(signal_logical_value::low, rawdata->RAISING_EDGE_PERIOD_US);
-			set_signal_transition_to(signal_logical_value::high, ((*data & mask) > 0) ? rawdata->LOGIC_HIGH_PERIOD_MAX_US : rawdata->LOGIC_LOW_PERIOD_MAX_US);
-			
+			set_signal_transition_to(signal_logical_value::high, (uint64_t)((*data & mask) != 0) ? rawdata->LOGIC_HIGH_PERIOD_MAX_US : rawdata->LOGIC_LOW_PERIOD_MAX_US);
+			set_signal_transition_to(signal_logical_value::low, (uint64_t)rawdata->RAISING_EDGE_PERIOD_US);
 		}
 
 		return ERROR_SUCCESS;

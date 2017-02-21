@@ -1,3 +1,9 @@
+/****************************************************************************************************************/
+/*                                                                                                              */
+/*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
+/*                                                                                                              */
+/****************************************************************************************************************/
+
 #pragma once
 
 #include "pch.h"
@@ -27,15 +33,20 @@ class sensor_base
 protected:
 	bool debug_mode = false;
 	static bool is_inited;
-	std::shared_ptr<std::string> m_name;
+	std::string m_name;
+	sensor_data m_sample_data;
+
+	std::error_code init();
+	virtual sensor_data read() = 0;
+	virtual std::error_code write(sensor_data& data) = 0;
+
 public:
 	sensor_base();
 	~sensor_base();
 
-	std::error_code init();
 	void set_debug_mode(bool mode);
-	virtual sensor_data read() = 0;
-	virtual std::error_code write(sensor_data& data) = 0;
-	virtual std::shared_ptr<std::string> name() const;
+	virtual std::error_code sample() = 0;
+	virtual std::string to_string() = 0;
+	virtual std::string name() const;
 };
 

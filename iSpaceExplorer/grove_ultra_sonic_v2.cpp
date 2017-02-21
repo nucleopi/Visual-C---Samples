@@ -1,6 +1,11 @@
+/****************************************************************************************************************/
+/*                                                                                                              */
+/*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
+/*                                                                                                              */
+/****************************************************************************************************************/
+
+
 #include "grove_ultra_sonic_v2.h"
-
-
 
 grove_ultra_sonic_v2::grove_ultra_sonic_v2()
 {
@@ -8,7 +13,7 @@ grove_ultra_sonic_v2::grove_ultra_sonic_v2()
 
 grove_ultra_sonic_v2::grove_ultra_sonic_v2(std::string name, uint32_t pin)
 {
-	m_name = std::make_shared<std::string>(name);
+	m_name = name;
 	m_echo = pin;
 	delay(200);
 }
@@ -66,7 +71,13 @@ sensor_data grove_ultra_sonic_v2::read()
 
 std::error_code grove_ultra_sonic_v2::write(sensor_data & data) { return std::make_error_code(std::errc::not_supported); }
 
-std::shared_ptr<std::string> grove_ultra_sonic_v2::name() const
+std::error_code grove_ultra_sonic_v2::sample()
 {
-	return std::shared_ptr<std::string>(new std::string("grove_ultra_sonic_v2"));
+	m_sample_data = read();
+	return m_sample_data.result_state;
+}
+
+std::string grove_ultra_sonic_v2::to_string()
+{
+	return std::to_string(m_sample_data.data1);
 }

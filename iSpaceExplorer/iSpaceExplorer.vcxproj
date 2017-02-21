@@ -68,26 +68,34 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="dht11.cpp" />
+    <ClCompile Include="groove_lcd.cpp" />
     <ClCompile Include="grove_ultra_sonic_v2.cpp" />
     <ClCompile Include="hc_sr04.cpp" />
     <ClCompile Include="adc832.cpp" />
-    <ClCompile Include="analog_sensor_adc832.cpp" />
+    <ClCompile Include="adc832_analog.cpp" />
+    <ClCompile Include="i2c_base.cpp" />
     <ClCompile Include="ir_base.cpp" />
     <ClCompile Include="ir_generic.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="one_wire_base.cpp" />
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="rth03.cpp" />
     <ClCompile Include="sensor_base.cpp" />
     <ClCompile Include="sensor_transmission_base.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="groove_lcd.h" />
     <ClInclude Include="grove_ultra_sonic_v2.h" />
     <ClInclude Include="hc_sr04.h" />
     <ClInclude Include="adc832.h" />
-    <ClInclude Include="analog_sensor_adc832.h" />
+    <ClInclude Include="adc832_analog.h" />
+    <ClInclude Include="dht11.h" />
+    <ClInclude Include="i2c_base.h" />
     <ClInclude Include="ir_base.h" />
     <ClInclude Include="ir_generic.h" />
     <ClInclude Include="one_wire_base.h" />
+    <ClInclude Include="rth03.h" />
     <ClInclude Include="sensor_base.h" />
     <ClInclude Include="sensor_transmission_base.h" />
   </ItemGroup>
