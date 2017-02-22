@@ -4,22 +4,15 @@
 /*                                                                                                              */
 /****************************************************************************************************************/
 
-#include "ir_base.h"
+#pragma once
 
-std::error_code ir_base::sample()
+#include "imu_spi_base.h"
+
+class adxl377 : public imu_spi_base
 {
-	return std::error_code();
-}
 
-const sensor_data& ir_base::get_data()
-{
-	return sensor_data();
-}
-
-std::error_code ir_base::set_data(sensor_data& data)
-{
-	return std::error_code();
-}
-
-ir_base::ir_base(std::string name, uint32_t dopin, uint32_t dipin) : sensor_transmission_base(name, dopin, dipin) {}
-
+public:
+	adxl377();
+	adxl377(std::string name);
+	~adxl377();
+};

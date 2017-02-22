@@ -14,14 +14,17 @@ adc832_analog::~adc832_analog()
 {
 }
 
-sensor_data adc832_analog::read()
+std::error_code adc832_analog::sample()
 {
-	sensor_data data;
-	data.result_state = std::make_error_code(static_cast<std::errc>(0));
-	return data;
+	return std::make_error_code(std::errc::not_supported);
 }
 
-std::error_code adc832_analog::write(sensor_data & data) 
+const sensor_data& adc832_analog::get_data()
+{
+	return m_sample_data;
+}
+
+std::error_code adc832_analog::set_data(sensor_data& data)
 { 
 	return std::make_error_code(std::errc::not_supported); 
 }

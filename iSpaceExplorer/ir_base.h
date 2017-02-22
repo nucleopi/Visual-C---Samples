@@ -7,9 +7,13 @@
 #pragma once
 
 #include "sensor_transmission_base.h"
-class ir_base :
-	public sensor_transmission_base
+class ir_base : public virtual sensor_transmission_base
 {
+protected:
+	virtual std::error_code sample();
+	virtual const sensor_data& get_data();
+	virtual std::error_code set_data(sensor_data& data);
+
 public:
 	ir_base(std::string name, uint32_t dopin, uint32_t dipin);
 	

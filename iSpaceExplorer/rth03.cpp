@@ -6,7 +6,11 @@
 
 #include "rth03.h"
 
-inline sensor_data rht03::read()
+rht03::rht03(std::string name, uint32_t dopin) : one_wire_base(name, dopin, 0) 
+{
+}
+
+std::error_code rht03::sample()
 {
 	uint32_t crc = 0;
 
@@ -25,8 +29,6 @@ inline sensor_data rht03::read()
 		uint8_t crc;
 	} databuf = {};
 #pragma pack(pop)
-
-	sensor_data ret_val;
 
 	//initiate handshake
 	begin_receive();
@@ -47,34 +49,52 @@ inline sensor_data rht03::read()
 
 	if (result)
 	{
-		ret_val.data1 = databuf.humidity * 0.1;
-		ret_val.data2 = databuf.temperature * 0.1;
-		ret_val.result_state = std::make_error_code(static_cast<std::errc>(0));
-
+		m_sample_data.set_data(databuf.temperature * 0.1, databuf.humidity * 0.1, ERROR_SUCCESS);
 	}
 	else
 	{
-		ret_val.result_state = std::make_error_code(std::errc::protocol_error);
+		m_sample_data.set_data(0.0, 0.0, std::make_error_code(std::errc::protocol_error));
 	}
 
-	return ret_val;
+	return m_sample_data.error_code();
 }
 
-std::error_code rht03::write(sensor_data & data)
+const sensor_data&  rht03::get_data()
+{
+	return m_sample_data;
+}
+
+std::error_code rht03::set_data(const sensor_data & data)
 {
 	return std::make_error_code(std::errc::not_supported);
 }
 
-std::error_code rht03::sample()
+rht03_data::rht03_data(rht03_data & data) : sensor_data(data)
 {
-	m_sample_data = read();
-	return m_sample_data.result_state;
+	m_temperature = data.m_temperature;
+	m_humidity = data.m_humidity;
 }
 
-std::string rht03::to_string()
+void rht03_data::set_data(float temp, float hum, std::error_code state)
+{
+	m_temperature = temp; 
+	m_humidity = hum; 
+	m_result_state = state; 
+}
+
+const float rht03_data::get_temperature()
+{ 
+	return m_temperature; 
+}
+
+const float rht03_data::get_humidity()
+{ 
+	return m_humidity; 
+}
+
+const std::string rht03_data::to_string()
 {
 	char buff[64];
-	snprintf(buff, sizeof(buff), "\n Hum:%.02f%% \t\t Temp:%.02fC\n", m_sample_data.data1, m_sample_data.data2);
-
+	snprintf(buff, sizeof(buff), "\n Hum:%.02f%% \t\t Temp:%.02fC\n", m_humidity, m_temperature);
 	return buff;
 }

@@ -17,7 +17,7 @@ void sensor_transmission_base::record_time()
 	times.push_back(std::chrono::high_resolution_clock::now());
 }
 
-sensor_transmission_base::sensor_transmission_base(std::string name, uint32_t dopin, uint32_t dipin) : m_output_pin(dopin), m_input_pin(dipin)
+sensor_transmission_base::sensor_transmission_base(std::string name, uint32_t dopin, uint32_t dipin) : sensor_base(), m_output_pin(dopin), m_input_pin(dipin)
 {
 	m_name = name;
 	std::error_code error = init();

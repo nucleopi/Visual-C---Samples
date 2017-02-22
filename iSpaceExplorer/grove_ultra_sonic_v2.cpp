@@ -23,7 +23,7 @@ grove_ultra_sonic_v2::~grove_ultra_sonic_v2()
 {
 }
 
-sensor_data grove_ultra_sonic_v2::read()
+std::error_code grove_ultra_sonic_v2::sample()
 {
 	pinMode(m_echo, OUTPUT);
 	delay(10);
@@ -41,10 +41,8 @@ sensor_data grove_ultra_sonic_v2::read()
 	{
 		if (micros() - state_start_time > GROVE_ULTRA_SONIC_V2_TIMEOUT)
 		{
-			sensor_data err;
-			err.data1 = 0;
-			err.result_state = std::make_error_code(std::errc::timed_out);
-			return err;
+			m_sample_data.set_data(0.0, std::make_error_code(std::errc::timed_out));
+			return m_sample_data.error_code();
 		}
 	}
 
@@ -55,29 +53,47 @@ sensor_data grove_ultra_sonic_v2::read()
 	{
 		if (micros() - state_start_time > GROVE_ULTRA_SONIC_V2_TIMEOUT)
 		{
-			sensor_data err;
-			err.data1 = 0;
-			err.result_state = std::make_error_code(std::errc::timed_out);
-			return err;
+			m_sample_data.set_data(0.0, std::make_error_code(std::errc::timed_out));
+			return m_sample_data.error_code();
 		}
 	}
 
-	sensor_data data;
-	data.data1 = (micros() - start_echo_measure) * 343.0 / 2000;
-	data.result_state = std::make_error_code(static_cast<std::errc>(0));
+	m_sample_data.set_data((float)((micros() - start_echo_measure) * 343.0 / 2000), ERROR_SUCCESS);
 
-	return data;
+	return m_sample_data.error_code();
 }
 
-std::error_code grove_ultra_sonic_v2::write(sensor_data & data) { return std::make_error_code(std::errc::not_supported); }
-
-std::error_code grove_ultra_sonic_v2::sample()
-{
-	m_sample_data = read();
-	return m_sample_data.result_state;
+std::error_code grove_ultra_sonic_v2::set_data(const sensor_data & data)
+{ 
+	return std::make_error_code(std::errc::not_supported); 
 }
 
-std::string grove_ultra_sonic_v2::to_string()
+const sensor_data& grove_ultra_sonic_v2::get_data()
 {
-	return std::to_string(m_sample_data.data1);
+	return m_sample_data;
+}
+
+
+grove_ultra_sonic_v2_data::grove_ultra_sonic_v2_data(grove_ultra_sonic_v2_data & data) : sensor_data(data)
+{
+	m_distance = data.m_distance;
+}
+
+void grove_ultra_sonic_v2_data::set_data(float dist, std::error_code state)
+{
+	m_distance = dist;
+	m_result_state = state;
+}
+
+const float grove_ultra_sonic_v2_data::get_distance()
+{
+	return m_distance;
+}
+
+
+const std::string grove_ultra_sonic_v2_data::to_string()
+{
+	char buff[64];
+	snprintf(buff, sizeof(buff), "\n Dist:%.02f%%cm \n", m_distance);
+	return buff;
 }

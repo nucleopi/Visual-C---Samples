@@ -32,7 +32,7 @@ void sensor_base::set_debug_mode(bool mode)
 	debug_mode = mode;
 }
 
-std::string sensor_base::name() const
+const std::string sensor_base::name()
 {
 	return m_name;
 }

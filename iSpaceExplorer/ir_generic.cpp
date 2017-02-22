@@ -16,26 +16,6 @@ ir_generic::~ir_generic()
 
 std::error_code ir_generic::sample()
 {
-	m_sample_data = read();
-	return m_sample_data.result_state;
-}
-
-std::string ir_generic::to_string()
-{
-	std::string ret = std::to_string(m_sample_data.data1);
-	ret.append(" ");
-	ret.append(std::to_string(m_sample_data.data1));
-	
-	return ret;
-}
-
-std::error_code ir_generic::send(sensor_data & data)
-{
-	return write(data);
-}
-
-sensor_data ir_generic::read()
-{
 #pragma pack(push, 1)
 	struct raw_data
 	{
@@ -51,7 +31,6 @@ sensor_data ir_generic::read()
 	} databuf = {};
 #pragma pack(pop)
 
-	sensor_data ret_val;
 
 	//initiate handshake
 	begin_receive(&databuf);
@@ -69,16 +48,17 @@ sensor_data ir_generic::read()
 		printf("Sensor data raw: %x\n", databuf.data2);
 	}
 
-	
-	ret_val.i32data1 = databuf.data1;
-	ret_val.i16data1 = databuf.data2;
-	ret_val.result_state = std::make_error_code(static_cast<std::errc>(0));
+	m_sample_data.set_data(databuf.data1, databuf.data2, ERROR_SUCCESS);
 
-	return ret_val;
-
+	return m_sample_data.error_code();
 }
 
-std::error_code ir_generic::write(sensor_data& data)
+const sensor_data& ir_generic::get_data()
+{
+	return m_sample_data;
+}
+
+std::error_code ir_generic::set_data(const sensor_data& data)
 {
 #pragma pack(push, 1)
 	struct raw_data
@@ -95,11 +75,16 @@ std::error_code ir_generic::write(sensor_data& data)
 	} databuf = {};
 #pragma pack(pop)
 	
+	ir_generic_data d = dynamic_cast<ir_generic_data& >(const_cast<sensor_data&>(data));
+
+	databuf.data1 = d.get_type();
+	databuf.data2 = d.get_code();
+
 	//initiate handshake
 	begin_send(&databuf);
 
-	send_data(&databuf, &data.i32data1);
-	send_data(&databuf, &data.i16data1);
+	send_data(&databuf, &databuf.data1);
+	send_data(&databuf, &databuf.data2);
 
 	//conclude receive and reset state so we are ready to receive again
 	end_send(&databuf);
@@ -113,4 +98,30 @@ std::error_code ir_generic::write(sensor_data& data)
 	return ERROR_SUCCESS;
 }
 
+ir_generic_data::ir_generic_data(ir_generic_data & data)
+{
+}
 
+void ir_generic_data::set_data(uint32_t type, uint16_t code, std::error_code state)
+{
+	m_type = type;
+	m_code = code;
+	m_result_state = state;
+}
+
+const uint32_t ir_generic_data::get_type()
+{
+	return m_type;
+}
+
+const uint16_t ir_generic_data::get_code()
+{
+	return m_code;
+}
+
+const std::string ir_generic_data::to_string()
+{
+	char buff[64];
+	snprintf(buff, sizeof(buff), "\n Type::%x \t\t Code:%x\n", m_type, m_code);
+	return buff;
+}

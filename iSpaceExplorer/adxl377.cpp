@@ -1,25 +1,19 @@
-/****************************************************************************************************************/
 /*                                                                                                              */
 /*   Copyright (c) Bogdan Mihalcea 2017                                                                         */
 /*                                                                                                              */
 /****************************************************************************************************************/
 
-#include "ir_base.h"
+#include "adxl377.h"
 
-std::error_code ir_base::sample()
+adxl377::adxl377(): imu_spi_base()
 {
-	return std::error_code();
 }
 
-const sensor_data& ir_base::get_data()
+adxl377::adxl377(std::string name)
 {
-	return sensor_data();
 }
 
-std::error_code ir_base::set_data(sensor_data& data)
+adxl377::~adxl377()
 {
-	return std::error_code();
 }
-
-ir_base::ir_base(std::string name, uint32_t dopin, uint32_t dipin) : sensor_transmission_base(name, dopin, dipin) {}
 

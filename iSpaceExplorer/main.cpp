@@ -250,12 +250,9 @@ int main(int argc, char** argv)
 
 				if (pin_input != 0)
 				{
-					sensor_data data;
-					data.i32data1 = 0xFFFFFFFF; // 0x40040100;
-					data.i16data1 = 0x0000; // 0xbcbd;
-					//data.i32data1 = 0x40040100;
-					//data.i16data1 = 0xbcbd;
-					((ir_generic*)s.get())->send(data);
+					ir_generic_data data;
+					data.set_data(0xFFFFFFFF, 0x0000, ERROR_SUCCESS); // 0x40040100, 0xbcbd;
+					(dynamic_cast<ir_generic*>(s.get()))->set_data(data);
 
 					delay(2000);
 
@@ -268,8 +265,7 @@ int main(int argc, char** argv)
 			if ( err == ERROR_SUCCESS)
 			{
 				char print_buff[100];
-				//snprintf(print_buff, sizeof(print_buff), "\n Sensor: %s \t\t Value1:\t%.2f\n", s->name().get()->c_str(), data.data1);
-				snprintf(print_buff, sizeof(print_buff), "\n Sensor: %s \t\t Data:%s\n", s->name().c_str(), s->to_string().c_str());
+				snprintf(print_buff, sizeof(print_buff), "\n Sensor: %s \t\t Data:%s\n", s->name().c_str(), const_cast<sensor_data&>(s->get_data()).to_string().c_str());
 				printf("%s", print_buff);
 			}
 			else

@@ -12,7 +12,14 @@ static constexpr int LOGIC_HIGH_PERIOD_MAX_US = 100;
 static constexpr int RAISING_EDGE_PERIOD_US = 60;
 static constexpr int LOGICAL_LOW_HIGH_BOUNDARY = 35;
 
-one_wire_base::one_wire_base(std::string name, uint32_t dopin, uint32_t dipin) : sensor_transmission_base(name, dopin, dipin) {}
+one_wire_base::one_wire_base(std::string name, uint32_t dopin): one_wire_base(name, dopin, 0)
+{
+	
+}
+
+one_wire_base::one_wire_base(std::string name, uint32_t dopin, uint32_t dipin) : sensor_transmission_base(name, dopin, dipin)
+{
+}
 
 void one_wire_base::begin_receive()
 {

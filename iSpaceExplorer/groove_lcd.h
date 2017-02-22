@@ -62,16 +62,16 @@
 #define LCD_5x10DOTS 0x04
 #define LCD_5x8DOTS 0x00
 
-class groove_lcd :
-	protected i2c_base
+class groove_lcd : public virtual i2c_base
 {
+	virtual const sensor_data& get_data();
+	virtual std::error_code set_data(const sensor_data& data);
+
 public:
 	groove_lcd(uint16_t id);
 	~groove_lcd();
 
 	virtual std::error_code sample();
-	virtual std::string to_string();
-
 	void print(const std::string &str);
 };
 

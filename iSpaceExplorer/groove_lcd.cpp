@@ -19,20 +19,25 @@ std::error_code groove_lcd::sample()
 	return std::make_error_code(std::errc::not_supported);
 }
 
-std::string groove_lcd::to_string()
+const sensor_data& groove_lcd::get_data()
 {
-	return std::string();
+	return sensor_data();
+}
+
+std::error_code groove_lcd::set_data(const sensor_data& data)
+{
+	return std::make_error_code(std::errc::not_supported);
 }
 
 void groove_lcd::print(const std::string &str)
 {
-	sensor_data data;
-	data.i32data1 = LCD_ADDRESS;
-	write(data);
+	sensor_basic_data data;
+	data.set_data(LCD_ADDRESS, ERROR_SUCCESS);
+	set_data(data);
 
 	for (auto c : str)
 	{
-		data.i32data1 = c;
-		write(data);
+		data.set_data(c, ERROR_SUCCESS);
+		set_data(data);
 	}
 }
