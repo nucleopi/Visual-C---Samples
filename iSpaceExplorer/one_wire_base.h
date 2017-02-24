@@ -10,7 +10,7 @@
 
 #include "sensor_transmission_base.h"
 
-class one_wire_base : public virtual sensor_transmission_base
+class one_wire_base : public sensor_transmission_base
 {
 protected:
 	one_wire_base(std::string name, uint32_t dopin);

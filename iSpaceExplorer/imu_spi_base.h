@@ -9,7 +9,7 @@
 #include "sensor_base.h"
 #include <wiringPiSPI.h>
 
-class imu_data : public virtual sensor_data
+class imu_data : public sensor_data
 {
 protected:
 	float m_x_acc;

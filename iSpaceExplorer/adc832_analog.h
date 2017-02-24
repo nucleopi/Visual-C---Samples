@@ -7,7 +7,7 @@
 #pragma once
 #include "adc832.h"
 
-class adc832_analog : public virtual adc832
+class adc832_analog : public adc832
 {
 	sensor_basic_data m_sample_data;
 public:

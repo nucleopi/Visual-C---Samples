@@ -20,7 +20,7 @@ inline float create_float(uint8_t int_val, uint8_t remainder_val)
 }
 
 
-class dht11_data : public virtual sensor_data
+class dht11_data : public sensor_data
 {
 protected:
 	float m_temperature;
@@ -36,7 +36,7 @@ public:
 	virtual const std::string to_string();
 };
 
-class dht11 : public virtual one_wire_base
+class dht11 : public one_wire_base
 {
 	dht11_data m_sample_data;
 public:

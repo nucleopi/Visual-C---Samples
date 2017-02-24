@@ -33,7 +33,7 @@ public:
 	virtual const std::string to_string() { return ""; }
 };
 
-class sensor_basic_data : public virtual sensor_data
+class sensor_basic_data : public sensor_data
 {
 protected:
 	uint32_t m_u32data;
@@ -54,7 +54,7 @@ public:
 class sensor_base
 {
 protected:
-	bool debug_mode = false;
+	bool verbosity_mode = false;
 	static bool is_inited;
 	std::string m_name;
 
@@ -64,7 +64,7 @@ public:
 	sensor_base();
 	~sensor_base();
 
-	void set_debug_mode(bool mode);
+	void set_verbosity(bool mode);
 	virtual std::error_code sample() = 0;
 	virtual const std::string name();
 	virtual const sensor_data& get_data() = 0;

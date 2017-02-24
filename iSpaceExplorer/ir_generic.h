@@ -8,7 +8,7 @@
 
 #include "ir_base.h"
 
-class ir_generic_data : public virtual sensor_data
+class ir_generic_data : public sensor_data
 {
 protected:
 	uint32_t m_type;
@@ -24,7 +24,7 @@ public:
 	virtual const std::string to_string();
 };
 
-class ir_generic : public virtual ir_base
+class ir_generic : public ir_base
 {
 	ir_generic_data m_sample_data;
 public:

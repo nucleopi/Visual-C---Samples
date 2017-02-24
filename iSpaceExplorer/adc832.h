@@ -9,7 +9,7 @@
 #include "pch.h"
 #include "sensor_base.h"
 
-class adc832: public virtual sensor_base
+class adc832: public sensor_base
 {
 	uint32_t m_dipin;
 	uint32_t m_dopin;

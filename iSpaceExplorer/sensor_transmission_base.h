@@ -16,7 +16,7 @@ enum class signal_logical_value
 	low = 0
 };
 
-class sensor_transmission_base : public virtual sensor_base
+class sensor_transmission_base : public sensor_base
 {
 protected:
 	uint32_t m_output_pin;
@@ -60,7 +60,7 @@ std::error_code sensor_transmission_base::receive_data(T * rawdata, Y * data, si
 			data[i / (sizeof(T) * 8)] |= 1;
 		}
 
-		if (debug_mode && spin >= rawdata->LOGIC_HIGH_PERIOD_MAX_US)
+		if (verbosity_mode && spin >= rawdata->LOGIC_HIGH_PERIOD_MAX_US)
 		{
 			printf("bad sig LOGIC_HIGH_PERIOD_MAX_US, expected: %d actual %d for data_bit:%d\n", rawdata->LOGIC_HIGH_PERIOD_MAX_US, spin, i);
 		}

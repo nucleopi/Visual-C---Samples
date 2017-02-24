@@ -77,7 +77,7 @@ static void show_usage(const string& name)
 
 int main(int argc, char** argv)
 {
-	bool debug_mode = false;
+	bool verbosity_mode = false;
 
 	if (!allow_user_cancel())
 	{
@@ -180,7 +180,7 @@ int main(int argc, char** argv)
 		}
 		else if ((arg == "-d") || (arg == "--debug"))
 		{
-			debug_mode = true;
+			verbosity_mode = true;
 		}
 		else if ((arg == "-sf") || (arg == "--sensor_file"))
 		{
@@ -228,9 +228,9 @@ int main(int argc, char** argv)
 			break;
 		}
 		
-		if (debug_mode)
+		if (verbosity_mode)
 		{
-			s->set_debug_mode(debug_mode);
+			s->set_verbosity(verbosity_mode);
 		}
 
 		sensors.push_back(std::move(s));

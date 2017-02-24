@@ -11,7 +11,7 @@
 #include "sensor_base.h"
 #include <wiringPiI2C.h>
 
-class i2c_base : public virtual sensor_base
+class i2c_base : public sensor_base
 {
 	uint32_t m_file_handle;
 	sensor_basic_data m_sample_data;

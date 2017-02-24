@@ -40,7 +40,7 @@ std::error_code rht03::sample()
 	//conclude receive and reset state so we are ready to receive again
 	end_receive();
 
-	if (debug_mode)
+	if (verbosity_mode)
 	{
 		printf("Sensor humidity raw: %d\t temperature raw: %d\n", databuf.humidity, databuf.temperature);
 	}

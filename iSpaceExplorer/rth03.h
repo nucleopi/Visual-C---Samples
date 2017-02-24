@@ -7,7 +7,7 @@
 #pragma once
 #include "one_wire_base.h"
 
-class rht03_data : public virtual sensor_data
+class rht03_data : public sensor_data
 {
 protected:
 	float m_temperature;
@@ -23,7 +23,7 @@ public:
 	virtual const std::string to_string();
 };
 
-class rht03 : public virtual one_wire_base
+class rht03 : public one_wire_base
 {
 	rht03_data m_sample_data;
 

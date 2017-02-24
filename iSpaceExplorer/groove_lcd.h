@@ -62,7 +62,7 @@
 #define LCD_5x10DOTS 0x04
 #define LCD_5x8DOTS 0x00
 
-class groove_lcd : public virtual i2c_base
+class groove_lcd : public i2c_base
 {
 	virtual const sensor_data& get_data();
 	virtual std::error_code set_data(const sensor_data& data);

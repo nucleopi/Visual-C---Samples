@@ -7,7 +7,7 @@
 #pragma once
 
 #include "sensor_transmission_base.h"
-class ir_base : public virtual sensor_transmission_base
+class ir_base : public sensor_transmission_base
 {
 protected:
 	virtual std::error_code sample();
@@ -96,7 +96,7 @@ bool ir_base::check_crc(T * data)
 		datasum_8bit += data8bit[i];
 	}
 
-	if (debug_mode)
+	if (verbosity_mode)
 	{
 		printf("CRC: %x, computed CRC : %x\n",
 			(uint8_t)data->crc, uint8_t(datasum_8bit));

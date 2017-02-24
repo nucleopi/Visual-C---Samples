@@ -42,7 +42,7 @@ std::error_code ir_generic::sample()
 	//conclude receive and reset state so we are ready to receive again
 	end_receive(&databuf);
 
-	if (debug_mode)
+	if (verbosity_mode)
 	{
 		printf("Sensor data raw: %x\n", databuf.data1);
 		printf("Sensor data raw: %x\n", databuf.data2);
@@ -89,7 +89,7 @@ std::error_code ir_generic::set_data(const sensor_data& data)
 	//conclude receive and reset state so we are ready to receive again
 	end_send(&databuf);
 
-	if (debug_mode)
+	if (verbosity_mode)
 	{
 		printf("Sensor data raw: %x\n", databuf.data1);
 		printf("Sensor data raw: %x\n", databuf.data2);

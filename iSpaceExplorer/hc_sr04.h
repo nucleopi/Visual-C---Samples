@@ -10,7 +10,7 @@
 
 uint32_t constexpr HC_SR04_TIMEOUT = 500000;
 
-class hc_sr04_data : public virtual sensor_data
+class hc_sr04_data : public sensor_data
 {
 protected:
 	float m_distance;

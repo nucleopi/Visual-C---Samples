@@ -11,7 +11,7 @@
 
 uint32_t constexpr GROVE_ULTRA_SONIC_V2_TIMEOUT = 500000;
 
-class grove_ultra_sonic_v2_data : public virtual sensor_data
+class grove_ultra_sonic_v2_data : public sensor_data
 {
 protected:
 	float m_distance;

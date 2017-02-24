@@ -60,7 +60,7 @@ bool one_wire_base::check_crc(const uint8_t * databuf, size_t count, uint8_t crc
 		datasum_8bit += databuf[i];
 	}
 
-	if (debug_mode)
+	if (verbosity_mode)
 	{
 		printf("CRC: %x, computed CRC : %x\n",
 			(uint8_t)crc, uint8_t(datasum_8bit));

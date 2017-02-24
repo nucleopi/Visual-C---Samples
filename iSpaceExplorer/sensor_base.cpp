@@ -27,9 +27,9 @@ std::error_code sensor_base::init()
 	return ERROR_SUCCESS;
 }
 
-void sensor_base::set_debug_mode(bool mode)
+void sensor_base::set_verbosity(bool mode)
 {
-	debug_mode = mode;
+	verbosity_mode = mode;
 }
 
 const std::string sensor_base::name()
